@@ -12,8 +12,8 @@
 
 #define MY_UUID { 0x25, 0x7A, 0x25, 0xC6, 0x3F, 0xE2, 0x44, 0xD8, 0xA2, 0x35, 0xC2, 0x07, 0x15, 0x7C, 0xF1, 0x41 }
 PBL_APP_INFO(MY_UUID,
-             "Fuzzy Time +", "atpeaz.com",
-             1, 2, /* App version */
+             "Fuzzy Time + Black", "renagerie.com",
+             1, 4, /* App version */
              RESOURCE_ID_IMAGE_MENU_ICON,
              APP_INFO_WATCH_FACE);
 #define ANIMATION_DURATION 800
@@ -155,7 +155,7 @@ void update_watch(PblTm* t) {
   //Let's get the new time and date
   fuzzy_time(t->tm_hour, t->tm_min, new_time.line1, new_time.line2, new_time.line3);
   string_format_time(str_topbar, sizeof(str_topbar), "%A, %b %e", t);
-  string_format_time(str_bottombar, sizeof(str_bottombar), "%H:%M", t);
+  string_format_time(str_bottombar, sizeof(str_bottombar), clock_is_24h_style() ? "%R" : "%I:%M", t);
   
   //Let's update the top and bottom bar anyway - **to optimize later to only update top bar every new day.
   text_layer_set_text(&topbarLayer, str_topbar);
@@ -199,7 +199,7 @@ void update_watch(PblTm* t) {
 void init_watch(PblTm* t) {
   fuzzy_time(t->tm_hour, t->tm_min, new_time.line1, new_time.line2, new_time.line3);
   string_format_time(str_topbar, sizeof(str_topbar), "%A, %b %e", t);
-  string_format_time(str_bottombar, sizeof(str_bottombar), "%H:%M", t);
+  string_format_time(str_bottombar, sizeof(str_bottombar), clock_is_24h_style() ? "%R" : "%I:%M", t);
   
   text_layer_set_text(&topbarLayer, str_topbar);
   text_layer_set_text(&bottombarLayer, str_bottombar);
