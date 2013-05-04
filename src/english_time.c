@@ -129,43 +129,47 @@ void fuzzy_time(int hours, int minutes, char* line1, char* line2, char* line3) {
   strcpy(line2, "");
   strcpy(line3, "");
 
-  if (minutes > 0 && minutes < 3) {
+  if (minutes == 0) {
+    strcat(line1,STR_ITS);
+  }
+  else if (minutes < 3) {
     strcat(line1,STR_JUST);
-  }
-  else if ((minutes >= 3 && minutes < 8) || (minutes >= 53 && minutes < 58)) {
-    strcat(line1,ONETEENS[5]);
-  }
-  else if ((minutes >= 8 && minutes < 13) || (minutes >= 48 && minutes < 53)) {
-    strcat(line1,ONETEENS[10]);
-  }
-  else if ((minutes >= 13 && minutes < 18) || (minutes >= 43 && minutes < 48)) {
-    strcat(line1,STR_QUARTER);
-  }
-  else if ((minutes >= 18 && minutes < 23) || (minutes >= 38 && minutes < 43)) {
-    strcat(line1,TWENS[0]);
-  }
-  else if ((minutes >= 23 && minutes < 28) || (minutes >= 33 && minutes < 38)) {
-    strcat(line1,TWENS[0]);
-    strcat(line2, ONETEENS[5]);
-    strcat(line2," ");
-  }
-  else if (minutes >= 28 && minutes < 33) {
-    strcat(line1,STR_HALF);
   }
   else if (minutes >= 58) {
     strcat(line1,STR_ALMOST);
   }
+  else if (minutes < 8 || minutes >= 53) {
+    strcat(line1,ONETEENS[5]);
+  }
+  else if (minutes < 13 || minutes >= 48) {
+    strcat(line1,ONETEENS[10]);
+  }
+  else if (minutes < 18 || minutes >= 43) {
+    strcat(line1,STR_QUARTER);
+  }
+  else if (minutes < 23 || minutes >= 38) {
+    strcat(line1,TWENS[0]);
+  }
+  else if (minutes < 28 || minutes >= 33) {
+    strcat(line1,TWENS[0]);
+    strcat(line2,ONETEENS[5]);
+    strcat(line2," ");
+  }
+  else  {
+    strcat(line1,STR_HALF);
+  }
 
   if (minutes >= 33) {
-    // convert to next our for "to" text
+    // convert to next hour for "to" text
     hours += 1;
-    hours %= 24;  // midnight
+    hours %= 24;  // midnight --> 0
   }    
 
-  hours %= 12;    // only twelve hour names
+  if (hours > 12) { // leave noon as 12
+    hours -= 12;  // only twelve hour names
+  }
 
   if (minutes == 0 || minutes >= 58){
-    strcat(line1,STR_ITS);
     if (hours == 0) {
       strcat(line2, STR_MIDNIGHT);
     }
@@ -194,7 +198,6 @@ void fuzzy_time(int hours, int minutes, char* line1, char* line2, char* line3) {
     else {
       strcat(line3, ONETEENS[hours]);
     }
-
   }
   
 }
