@@ -71,8 +71,8 @@ void fuzzy_time(int hours, int minutes, char* line1, char* line2, char* line3) {
   }
   else if (minutes < 28 || minutes >= 33) {
     strcat(line1,STR_TWENTY);
-    if (minutes >= 23 || minutes < 38) {
-			strcat(line2,ONETEENS[5]);
+    if ((minutes >= 23 && minutes < 28) || (minutes >= 33 && minutes < 38)) {
+			strcat(line2,STR_FIVE);
 			strcat(line2," ");
 		}
 	}
