@@ -129,39 +129,45 @@ void fuzzy_time(int hours, int minutes, char* line1, char* line2, char* line3) {
   strcpy(line2, "");
   strcpy(line3, "");
 
-  if (minutes > 0 && minutes < 5) {
+  if (minutes > 0 && minutes < 3) {
     strcat(line1,STR_JUST);
   }
-  else if ((minutes >= 5 && minutes < 10) || (minutes >= 55 && minutes < 58)) {
+  else if ((minutes >= 3 && minutes < 8) || (minutes >= 53 && minutes < 58)) {
     strcat(line1,ONETEENS[5]);
   }
-  else if ((minutes >= 10 && minutes < 15) || (minutes >= 50 && minutes < 55)) {
+  else if ((minutes >= 8 && minutes < 13) || (minutes >= 48 && minutes < 53)) {
     strcat(line1,ONETEENS[10]);
   }
-  else if ((minutes >= 15 && minutes < 20) || (minutes >= 45 && minutes < 50)) {
+  else if ((minutes >= 13 && minutes < 18) || (minutes >= 43 && minutes < 48)) {
     strcat(line1,STR_QUARTER);
   }
-  else if ((minutes >= 20 && minutes < 25) || (minutes >= 40 && minutes < 45)) {
+  else if ((minutes >= 18 && minutes < 23) || (minutes >= 38 && minutes < 43)) {
     strcat(line1,TWENS[0]);
   }
-  else if ((minutes >= 25 && minutes < 30) || (minutes >= 35 && minutes < 40)) {
+  else if ((minutes >= 23 && minutes < 28) || (minutes >= 33 && minutes < 38)) {
     strcat(line1,TWENS[0]);
-    strcat(line2,"5");
+    strcat(line2, ONETEENS[5]);
     strcat(line2," ");
   }
-  else if (minutes >= 30 && minutes < 35) {
+  else if (minutes >= 28 && minutes < 33) {
     strcat(line1,STR_HALF);
   }
-  else if (minutes >=58 && minutes < 60) {
+  else if (minutes >= 58) {
     strcat(line1,STR_ALMOST);
   }
-    
-  if (hours > 12) hours -= 12;
 
-  if(minutes == 0){
+  if (minutes >= 33) {
+    // convert to next our for "to" text
+    hours += 1;
+    hours %= 24;  // midnight
+  }    
+
+  hours %= 12;    // only twelve hour names
+
+  if (minutes == 0 || minutes >= 58){
     strcat(line1,STR_ITS);
-    if(hours == 0) {
-      strcat(line2,STR_MIDNIGHT);
+    if (hours == 0) {
+      strcat(line2, STR_MIDNIGHT);
     }
     else if (hours == 12) {
       strcat(line2, STR_NOON);
@@ -170,20 +176,17 @@ void fuzzy_time(int hours, int minutes, char* line1, char* line2, char* line3) {
       strcat(line2, ONETEENS[hours]);
       strcat(line3, STR_OH_CLOCK);
     }
-  } 
+  }
   else {
-    if(minutes < 35) {
+    if(minutes < 33) {
       strcat(line2,STR_PAST);
     }
     else {
-      hours += 1;
-      if (hours == 24) hours = 0;
-      if (hours > 12) hours -= 12;
       strcat(line2,STR_TO);
     }
 
     if(hours == 0) {
-      strcat(line3,STR_MIDNIGHT);
+      strcat(line3, STR_MIDNIGHT);
     }
     else if (hours == 12) {
       strcat(line3, STR_NOON);
