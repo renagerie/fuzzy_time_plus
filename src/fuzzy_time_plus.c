@@ -151,16 +151,28 @@ void updateLayer(TextLine *animating_line, int line) {
   animation_schedule(&animating_line->layer_animation[0].animation);
 }
 
-void update_watch(PblTm* t) {
+void update_top_and_bottom_bars(PblTm* t) {
   //Let's get the new time and date
   fuzzy_time(t->tm_hour, t->tm_min, new_time.line1, new_time.line2, new_time.line3);
   string_format_time(str_topbar, sizeof(str_topbar), "%A, %b %e", t);
-  string_format_time(str_bottombar, sizeof(str_bottombar), clock_is_24h_style() ? "%R" : "%I:%M", t);
+  if (clock_is_24h_style()) {
+    string_format_time(str_bottombar, sizeof(str_bottombar), "%R", t);
+  } else {
+    string_format_time(str_bottombar, sizeof(str_bottombar), "%I:%M", t);
+    // remove leading zero
+    if (str_bottombar[0] == '0') {
+      memmove(str_bottombar, &str_bottombar[1], sizeof(str_bottombar) - 1);
+    }
+  }
   
   //Let's update the top and bottom bar anyway - **to optimize later to only update top bar every new day.
   text_layer_set_text(&topbarLayer, str_topbar);
   text_layer_set_text(&bottombarLayer, str_bottombar);
-  
+}
+
+void update_watch(PblTm* t) {
+  update_top_and_bottom_bars(t);
+
   if(t->tm_min == 0){
     vibes_short_pulse();
   }
@@ -197,12 +209,7 @@ void update_watch(PblTm* t) {
 }
 
 void init_watch(PblTm* t) {
-  fuzzy_time(t->tm_hour, t->tm_min, new_time.line1, new_time.line2, new_time.line3);
-  string_format_time(str_topbar, sizeof(str_topbar), "%A, %b %e", t);
-  string_format_time(str_bottombar, sizeof(str_bottombar), clock_is_24h_style() ? "%R" : "%I:%M", t);
-  
-  text_layer_set_text(&topbarLayer, str_topbar);
-  text_layer_set_text(&bottombarLayer, str_bottombar);
+  update_top_and_bottom_bars(t);
 
   strcpy(cur_time.line1, new_time.line1);
   strcpy(cur_time.line2, new_time.line2);
