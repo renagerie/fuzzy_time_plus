@@ -9,6 +9,7 @@
 #include "pebble_app.h"
 #include "pebble_fonts.h"
 #include "english_time.h"
+#include "fuzzy_time_plus.h"
 
 #define MY_UUID { 0x25, 0x7A, 0x25, 0xC6, 0x3F, 0xE2, 0x44, 0xD8, 0xA2, 0x35, 0xC2, 0x07, 0x15, 0x7C, 0xF1, 0x41 }
 PBL_APP_INFO(MY_UUID,
@@ -19,6 +20,7 @@ PBL_APP_INFO(MY_UUID,
 #define ANIMATION_DURATION 800
 #define LINE_BUFFER_SIZE 50
 #define WINDOW_NAME "fuzzy_time_plus_black"
+#define ALMOST_MIN (SHOW_FIVES ? 58 : 53)
 
 Window window;
 
@@ -175,10 +177,9 @@ void update_watch(PblTm* t) {
 
   update_top_and_bottom_bars(t);
 
-// Uncomment to enable hour vibrate
-//   if(t->tm_min == 0){
-//     vibes_short_pulse();
-//   }
+  if(HOUR_VIBRATE && t->tm_min == 0){
+    vibes_short_pulse();
+  }
   
   //update line1 only if changed
   if(strcmp(new_time.line1,cur_time.line1) != 0){
@@ -190,12 +191,12 @@ void update_watch(PblTm* t) {
       reset_line2();
     }
     updateLayer(&line2, 2);
-	  if (strlen(new_time.line2) > (t->tm_min == 0 || t->tm_min >= 58 ? 6 : 8)) {
-      text_layer_set_font(&line2.layer[0], fonts_get_system_font(t->tm_min == 0 || t->tm_min >= 58 ? FONT_KEY_GOTHAM_30_BLACK : FONT_KEY_GOTHIC_28));
-      text_layer_set_font(&line2.layer[1], fonts_get_system_font(t->tm_min == 0 || t->tm_min >= 58 ? FONT_KEY_GOTHAM_30_BLACK : FONT_KEY_GOTHIC_28));
+	  if (strlen(new_time.line2) > (t->tm_min == 0 || t->tm_min >= ALMOST_MIN ? 6 : 8)) {
+      text_layer_set_font(&line2.layer[0], fonts_get_system_font(t->tm_min == 0 || t->tm_min >= ALMOST_MIN ? FONT_KEY_GOTHAM_30_BLACK : FONT_KEY_GOTHIC_28));
+      text_layer_set_font(&line2.layer[1], fonts_get_system_font(t->tm_min == 0 || t->tm_min >= ALMOST_MIN ? FONT_KEY_GOTHAM_30_BLACK : FONT_KEY_GOTHIC_28));
     } else {
-      text_layer_set_font(&line2.layer[0], fonts_get_system_font(t->tm_min == 0 || t->tm_min >= 58 ? FONT_KEY_GOTHAM_42_BOLD : FONT_KEY_GOTHAM_42_LIGHT));
-      text_layer_set_font(&line2.layer[1], fonts_get_system_font(t->tm_min == 0 || t->tm_min >= 58 ? FONT_KEY_GOTHAM_42_BOLD : FONT_KEY_GOTHAM_42_LIGHT));
+      text_layer_set_font(&line2.layer[0], fonts_get_system_font(t->tm_min == 0 || t->tm_min >= ALMOST_MIN ? FONT_KEY_GOTHAM_42_BOLD : FONT_KEY_GOTHAM_42_LIGHT));
+      text_layer_set_font(&line2.layer[1], fonts_get_system_font(t->tm_min == 0 || t->tm_min >= ALMOST_MIN ? FONT_KEY_GOTHAM_42_BOLD : FONT_KEY_GOTHAM_42_LIGHT));
 	  }
   }
   //update line3 only if changed
