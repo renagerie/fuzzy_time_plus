@@ -18,7 +18,7 @@ PBL_APP_INFO(MY_UUID,
              APP_INFO_WATCH_FACE);
 #define ANIMATION_DURATION 800
 #define LINE_BUFFER_SIZE 50
-#define WINDOW_NAME "fuzzy_time_plus"
+#define WINDOW_NAME "fuzzy_time_plus_black"
 
 Window window;
 
@@ -40,7 +40,7 @@ TextLine line1;
 TextLine line2;
 TextLine line3;
 
-static TheTime cur_time;
+static TheTime cur_time = { "", "", "" };
 static TheTime new_time;
 
 static char str_topbar[LINE_BUFFER_SIZE];
@@ -152,9 +152,8 @@ void updateLayer(TextLine *animating_line, int line) {
 }
 
 void update_top_and_bottom_bars(PblTm* t) {
-  //Let's get the new time and date
-  fuzzy_time(t->tm_hour, t->tm_min, new_time.line1, new_time.line2, new_time.line3);
   string_format_time(str_topbar, sizeof(str_topbar), "%A, %b %e", t);
+
   if (clock_is_24h_style()) {
     string_format_time(str_bottombar, sizeof(str_bottombar), "%R", t);
   } else {
@@ -171,6 +170,9 @@ void update_top_and_bottom_bars(PblTm* t) {
 }
 
 void update_watch(PblTm* t) {
+  //Let's get the new time and date
+  fuzzy_time(t->tm_hour, t->tm_min, new_time.line1, new_time.line2, new_time.line3);
+
   update_top_and_bottom_bars(t);
 
 // Uncomment to enable hour vibrate
@@ -178,65 +180,36 @@ void update_watch(PblTm* t) {
 //     vibes_short_pulse();
 //   }
   
-  //update hour only if changed
+  //update line1 only if changed
   if(strcmp(new_time.line1,cur_time.line1) != 0){
     updateLayer(&line1, 1);
   }
-  //update min1 only if changed
+  //update line2 only if changed
   if(strcmp(new_time.line2,cur_time.line2) != 0){
     if(t->tm_min > 1){
       reset_line2();
     }
     updateLayer(&line2, 2);
 	  if (strlen(new_time.line2) > (t->tm_min == 0 || t->tm_min >= 58 ? 6 : 8)) {
-		text_layer_set_font(&line2.layer[0], fonts_get_system_font(t->tm_min == 0 || t->tm_min >= 58 ? FONT_KEY_GOTHAM_30_BLACK : FONT_KEY_GOTHIC_28));
-		text_layer_set_font(&line2.layer[1], fonts_get_system_font(t->tm_min == 0 || t->tm_min >= 58 ? FONT_KEY_GOTHAM_30_BLACK : FONT_KEY_GOTHIC_28));
-	  } else {
-		text_layer_set_font(&line2.layer[0], fonts_get_system_font(t->tm_min == 0 || t->tm_min >= 58 ? FONT_KEY_GOTHAM_42_BOLD : FONT_KEY_GOTHAM_42_LIGHT));
-		text_layer_set_font(&line2.layer[1], fonts_get_system_font(t->tm_min == 0 || t->tm_min >= 58 ? FONT_KEY_GOTHAM_42_BOLD : FONT_KEY_GOTHAM_42_LIGHT));
+      text_layer_set_font(&line2.layer[0], fonts_get_system_font(t->tm_min == 0 || t->tm_min >= 58 ? FONT_KEY_GOTHAM_30_BLACK : FONT_KEY_GOTHIC_28));
+      text_layer_set_font(&line2.layer[1], fonts_get_system_font(t->tm_min == 0 || t->tm_min >= 58 ? FONT_KEY_GOTHAM_30_BLACK : FONT_KEY_GOTHIC_28));
+    } else {
+      text_layer_set_font(&line2.layer[0], fonts_get_system_font(t->tm_min == 0 || t->tm_min >= 58 ? FONT_KEY_GOTHAM_42_BOLD : FONT_KEY_GOTHAM_42_LIGHT));
+      text_layer_set_font(&line2.layer[1], fonts_get_system_font(t->tm_min == 0 || t->tm_min >= 58 ? FONT_KEY_GOTHAM_42_BOLD : FONT_KEY_GOTHAM_42_LIGHT));
 	  }
   }
-  //update min2 only if changed happens on
+  //update line3 only if changed
   if(strcmp(new_time.line3,cur_time.line3) != 0){
 	  if (strlen(new_time.line3) > 6) {
-		text_layer_set_font(&line3.layer[0], fonts_get_system_font(FONT_KEY_GOTHAM_30_BLACK));
-		text_layer_set_font(&line3.layer[1], fonts_get_system_font(FONT_KEY_GOTHAM_30_BLACK));
-	  } else {
-		text_layer_set_font(&line3.layer[0], fonts_get_system_font(FONT_KEY_GOTHAM_42_BOLD));
-		text_layer_set_font(&line3.layer[1], fonts_get_system_font(FONT_KEY_GOTHAM_42_BOLD));
+      text_layer_set_font(&line3.layer[0], fonts_get_system_font(FONT_KEY_GOTHAM_30_BLACK));
+      text_layer_set_font(&line3.layer[1], fonts_get_system_font(FONT_KEY_GOTHAM_30_BLACK));
+    } else {
+      text_layer_set_font(&line3.layer[0], fonts_get_system_font(FONT_KEY_GOTHAM_42_BOLD));
+      text_layer_set_font(&line3.layer[1], fonts_get_system_font(FONT_KEY_GOTHAM_42_BOLD));
 	  }
     updateLayer(&line3, 3);
   }
 }
-
-void init_watch(PblTm* t) {
-  update_top_and_bottom_bars(t);
-
-  strcpy(cur_time.line1, new_time.line1);
-  strcpy(cur_time.line2, new_time.line2);
-  strcpy(cur_time.line3, new_time.line3);
-
-  if (strlen(cur_time.line2) > (t->tm_min == 0 || t->tm_min >= 58 ? 6 : 8)) {
-	text_layer_set_font(&line2.layer[0], fonts_get_system_font(t->tm_min == 0 || t->tm_min >= 58 ? FONT_KEY_GOTHAM_30_BLACK : FONT_KEY_GOTHIC_28));
-	text_layer_set_font(&line2.layer[1], fonts_get_system_font(t->tm_min == 0 || t->tm_min >= 58 ? FONT_KEY_GOTHAM_30_BLACK : FONT_KEY_GOTHIC_28));
-  } else {
-	text_layer_set_font(&line2.layer[0], fonts_get_system_font(t->tm_min == 0 || t->tm_min >= 58 ? FONT_KEY_GOTHAM_42_BOLD : FONT_KEY_GOTHAM_42_LIGHT));
-	text_layer_set_font(&line2.layer[1], fonts_get_system_font(t->tm_min == 0 || t->tm_min >= 58 ? FONT_KEY_GOTHAM_42_BOLD : FONT_KEY_GOTHAM_42_LIGHT));
-  }
-  
-  if (strlen(cur_time.line3) > 6) {
-    text_layer_set_font(&line3.layer[0], fonts_get_system_font(FONT_KEY_GOTHAM_30_BLACK));
-    text_layer_set_font(&line3.layer[1], fonts_get_system_font(FONT_KEY_GOTHAM_30_BLACK));
-  } else {
-    text_layer_set_font(&line3.layer[0], fonts_get_system_font(FONT_KEY_GOTHAM_42_BOLD));
-    text_layer_set_font(&line3.layer[1], fonts_get_system_font(FONT_KEY_GOTHAM_42_BOLD));
-  }
-
-  text_layer_set_text(&line1.layer[0], cur_time.line1);
-  text_layer_set_text(&line2.layer[0], cur_time.line2);
-  text_layer_set_text(&line3.layer[0], cur_time.line3);
-}
-
 
 // Handle the start-up of the app
 void handle_init_app(AppContextRef app_ctx) {
@@ -309,7 +282,7 @@ void handle_init_app(AppContextRef app_ctx) {
 
   PblTm t;
   get_time(&t);
-  init_watch(&t);
+  update_watch(&t);
 
   layer_add_child(&window.layer, &line3_bg.layer);
   layer_add_child(&window.layer, &line3.layer[0].layer);
