@@ -173,9 +173,10 @@ void update_top_and_bottom_bars(PblTm* t) {
 void update_watch(PblTm* t) {
   update_top_and_bottom_bars(t);
 
-  if(t->tm_min == 0){
-    vibes_short_pulse();
-  }
+// Uncomment to enable hour vibrate
+//   if(t->tm_min == 0){
+//     vibes_short_pulse();
+//   }
   
   //update hour only if changed
   if(strcmp(new_time.line1,cur_time.line1) != 0){
